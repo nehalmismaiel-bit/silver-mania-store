@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f1">
+  <meta name="description" content="Silver Mania Store — اكتشفي أناقة الفضة في كل تفصيلة.">
+  <title>Silver Mania Store | أناقة من فضة</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+    :root{--ink:#222321;--muted:#777873;--silver:#b8b9b6;--paper:#f7f5f1;--white:#fff;--line:#e8e5df;--accent:#8c8174}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Cairo',Arial,sans-serif}
+    a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
+    .announcement{background:#292a28;color:#fff;text-align:center;padding:9px 16px;font-size:12px;letter-spacing:.3px}
+    header{position:sticky;top:0;z-index:5;background:#f7f5f1ed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .nav{max-width:1180px;margin:auto;padding:17px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{font-size:21px;font-weight:800;letter-spacing:1px;direction:ltr;white-space:nowrap}.brand span{font-weight:400;color:var(--accent)}
+    .links{display:flex;gap:28px;font-size:13px;color:#555}.links a:hover{color:var(--accent)}
+    .cart{border:1px solid #d8d5ce;background:transparent;border-radius:30px;padding:8px 15px;font-size:12px}
+    .hero{max-width:1180px;margin:34px auto 76px;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;min-height:490px;gap:26px;align-items:center}
+    .hero-copy{padding:30px 2vw 30px 0}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--accent);font-weight:700}
+    h1{font-size:clamp(38px,5vw,66px);line-height:1.35;margin:18px 0 15px;font-weight:600;letter-spacing:-1.5px}
+    .hero-copy p{color:var(--muted);line-height:2.1;font-size:14px;max-width:440px;margin:0 0 28px}
+    .primary{display:inline-block;background:var(--ink);color:#fff;padding:13px 28px;border-radius:2px;font-size:12px;transition:.2s}.primary:hover{background:var(--accent);transform:translateY(-2px)}
+    .hero-art{min-height:480px;position:relative;overflow:hidden;background:linear-gradient(145deg,#e7e4de,#c8c7c2 52%,#eeece7);display:grid;place-items:center}
+    .hero-art:before,.hero-art:after{content:"";position:absolute;border:1px solid #ffffffa6;border-radius:50%;width:370px;height:370px}
+    .hero-art:after{width:290px;height:290px}
+    .ring{width:170px;height:170px;border:13px solid #e8e8e5;border-radius:50%;box-shadow:inset 5px 5px 12px #8c8d8a,8px 12px 22px #77787366;transform:rotate(-24deg);position:relative;z-index:1}
+    .ring:after{content:"";position:absolute;width:28px;height:28px;background:#f8f8f5;border:5px solid #d7d8d5;transform:rotate(45deg);top:-26px;left:55px;box-shadow:0 2px 8px #777}
+    .art-label{position:absolute;bottom:24px;left:26px;color:#fff;font-size:10px;letter-spacing:3px;direction:ltr}
+    .section{max-width:1180px;margin:0 auto;padding:0 24px 78px}
+    .section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px;gap:15px}
+    .section-head h2{font-size:27px;font-weight:600;margin:7px 0 0}.section-head p{color:var(--muted);font-size:12px;margin:0}
+    .categories{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .category{min-height:190px;padding:25px;display:flex;flex-direction:column;justify-content:end;position:relative;overflow:hidden;background:linear-gradient(135deg,#e8e6e1,#c9c9c5);isolation:isolate}
+    .category:nth-child(2){background:linear-gradient(135deg,#d8d5cf,#aaa9a4)}.category:nth-child(3){background:linear-gradient(135deg,#e6e1dc,#c6bdb3)}
+    .category:before{content:"";position:absolute;width:155px;height:155px;border:1px solid #ffffff9c;border-radius:50%;top:-48px;left:15px;z-index:-1}
+    .category strong{font-size:20px;font-weight:600}.category span{font-size:11px;color:#555;margin-top:5px}
+    .note{background:#eeece7;text-align:center;padding:54px 24px;margin-bottom:0}.note h2{font-size:24px;font-weight:600;margin:0 0 10px}.note p{font-size:12px;color:var(--muted);margin:0}
+    footer{background:#292a28;color:#fff;padding:30px 24px;text-align:center;font-size:11px}footer .brand{font-size:17px;margin-bottom:8px}footer p{color:#c6c5c0;margin:0}
+    @media(max-width:700px){.nav{padding:14px 17px}.links{gap:13px;font-size:11px}.links a:nth-child(3){display:none}.brand{font-size:16px}.cart{padding:7px 10px}.hero{grid-template-columns:1fr;margin:15px auto 55px;gap:15px}.hero-copy{padding:35px 4px 10px}.hero-art{min-height:300px;grid-row:1}.ring{width:135px;height:135px;border-width:11px}.ring:after{left:43px}.categories{grid-template-columns:1fr}.category{min-height:145px}.section-head{align-items:start;flex-direction:column}.section-head h2{font-size:23px}}
+  </style>
+</head>
+<body>
+  <div class="announcement">تفاصيل صغيرة… أناقة تدوم ✦</div>
+  <header>
+    <nav class="nav" aria-label="القائمة الرئيسية">
+      <a class="brand" href="#">SILVER <span>MANIA</span></a>
+      <div class="links"><a href="#home">الرئيسية</a><a href="#collections">المجموعات</a><a href="#about">عن المتجر</a></div>
+      <button class="cart" type="button" aria-label="سلة التسوق">السلة <span id="cart-count">0</span></button>
+    </nav>
+  </header>
+  <main id="home">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">SILVER, WITH LOVE</div>
+        <h1>أناقة من فضة،<br>تليق بيكي.</h1>
+        <p>قطع فضية تضيف لمسة هادئة ومميزة لكل يوم. اكتشفي مجموعتنا واختاري التفاصيل اللي تشبهك.</p>
+        <a class="primary" href="#collections">اكتشفي المجموعات</a>
+      </div>
+      <div class="hero-art" role="img" aria-label="تصميم فني تجريدي لخاتم فضي">
+        <div class="ring"></div><div class="art-label">TIMELESS DETAILS</div>
+      </div>
+    </section>
+    <section class="section" id="collections">
+      <div class="section-head"><div><div class="eyebrow">FIND YOUR STYLE</div><h2>تسوّقي حسب المجموعة</h2></div><p>اختاري اللمسة الأقرب لذوقك</p></div>
+      <div class="categories">
+        <a class="category" href="#contact"><strong>الخواتم</strong><span>تفاصيل تكمّل إطلالتك ←</span></a>
+        <a class="category" href="#contact"><strong>السلاسل</strong><span>لمسة رقيقة كل يوم ←</span></a>
+        <a class="category" href="#contact"><strong>الحلقان</strong><span>أناقة في كل تفصيلة ←</span></a>
+      </div>
+    </section>
+    <section class="note" id="about"><h2>الجمال في التفاصيل</h2><p>Silver Mania Store — مساحة لكل محبّات أناقة الفضة.</p></section>
+  </main>
+  <footer id="contact"><div class="brand">SILVER <span>MANIA</span></div><p>© <span id="year"></span> Silver Mania Store. جميع الحقوق محفوظة.</p></footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.querySelector('.cart').addEventListener('click', () => alert('هنضيف تفاصيل السلة مع تجهيز المنتجات.'));
+  </script>
+</body>
+</html>
