@@ -36,9 +36,18 @@
     .category:nth-child(2){background:linear-gradient(135deg,#d8d5cf,#aaa9a4)}.category:nth-child(3){background:linear-gradient(135deg,#e6e1dc,#c6bdb3)}
     .category:before{content:"";position:absolute;width:155px;height:155px;border:1px solid #ffffff9c;border-radius:50%;top:-48px;left:15px;z-index:-1}
     .category strong{font-size:20px;font-weight:600}.category span{font-size:11px;color:#555;margin-top:5px}
+
+    .products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .product{background:#fff;border:1px solid var(--line);padding:14px;text-align:center}
+    .product-art{height:170px;background:linear-gradient(145deg,#eeece7,#d8d5cf);display:grid;place-items:center;margin-bottom:14px;position:relative;overflow:hidden}
+    .product-art:before{content:"";width:88px;height:88px;border:3px solid #b8b9b6;border-radius:50%;box-shadow:inset 2px 2px 6px #999,3px 5px 9px #7775}
+    .product-art:after{content:"✦";position:absolute;color:#b49b62;font-size:28px;top:45%;left:50%;transform:translate(-50%,-50%)}
+    .product h3{font-size:14px;font-weight:600;margin:8px 0}
+    .product p{font-size:11px;color:var(--muted);margin:0 0 9px}
+    .price{font-size:15px;font-weight:800;color:var(--accent)}
     .note{background:#eeece7;text-align:center;padding:54px 24px;margin-bottom:0}.note h2{font-size:24px;font-weight:600;margin:0 0 10px}.note p{font-size:12px;color:var(--muted);margin:0}
     footer{background:#292a28;color:#fff;padding:30px 24px;text-align:center;font-size:11px}footer .brand{font-size:17px;margin-bottom:8px}footer p{color:#c6c5c0;margin:0}
-    @media(max-width:700px){.nav{padding:14px 17px}.links{gap:13px;font-size:11px}.links a:nth-child(3){display:none}.brand{font-size:16px}.cart{padding:7px 10px}.hero{grid-template-columns:1fr;margin:15px auto 55px;gap:15px}.hero-copy{padding:35px 4px 10px}.hero-art{min-height:300px;grid-row:1}.ring{width:135px;height:135px;border-width:11px}.ring:after{left:43px}.categories{grid-template-columns:1fr}.category{min-height:145px}.section-head{align-items:start;flex-direction:column}.section-head h2{font-size:23px}}
+    @media(max-width:900px){.products{grid-template-columns:repeat(2,1fr)}}\n    @media(max-width:700px){.nav{padding:14px 17px}.links{gap:13px;font-size:11px}.links a:nth-child(3){display:none}.brand{font-size:16px}.cart{padding:7px 10px}.hero{grid-template-columns:1fr;margin:15px auto 55px;gap:15px}.hero-copy{padding:35px 4px 10px}.hero-art{min-height:300px;grid-row:1}.ring{width:135px;height:135px;border-width:11px}.ring:after{left:43px}.categories{grid-template-columns:1fr}.category{min-height:145px}.section-head{align-items:start;flex-direction:column}.section-head h2{font-size:23px}}
   </style>
 </head>
 <body>
@@ -46,7 +55,7 @@
   <header>
     <nav class="nav" aria-label="القائمة الرئيسية">
       <a class="brand" href="#">SILVER <span>MANIA</span></a>
-      <div class="links"><a href="#home">الرئيسية</a><a href="#collections">المجموعات</a><a href="#about">عن المتجر</a></div>
+      <div class="links"><a href="#home">الرئيسية</a><a href="#collections">المجموعات</a><a href="#products">المنتجات</a><a href="#about">عن المتجر</a></div>
       <button class="cart" type="button" aria-label="سلة التسوق">السلة <span id="cart-count">0</span></button>
     </nav>
   </header>
@@ -68,6 +77,16 @@
         <a class="category" href="#contact"><strong>الخواتم</strong><span>تفاصيل تكمّل إطلالتك ←</span></a>
         <a class="category" href="#contact"><strong>السلاسل</strong><span>لمسة رقيقة كل يوم ←</span></a>
         <a class="category" href="#contact"><strong>الحلقان</strong><span>أناقة في كل تفصيلة ←</span></a>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="section-head"><div><div class="eyebrow">OUR PICKS</div><h2>قطع مختارة ليكي</h2></div><p>تفاصيل مميزة من Silver Mania</p></div>
+      <div class="products">
+        <article class="product"><div class="product-art" role="img" aria-label="عقد فضي بتفاصيل ذهبية وحجر أخضر"></div><h3>عقد فضي بتفاصيل ذهبية وحجر أخضر</h3><p>تصميم أنيق بلمسات ذهبية وخضراء</p><div class="price">3,900 جنيه</div></article>
+        <article class="product"><div class="product-art" role="img" aria-label="عقد فضي بتفاصيل ذهبية وحجر أحمر"></div><h3>عقد فضي بتفاصيل ذهبية وحجر أحمر</h3><p>تصميم أنيق بلمسات ذهبية وحمراء</p><div class="price">3,900 جنيه</div></article>
+        <article class="product"><div class="product-art" role="img" aria-label="عقد فضي بتعليقات نجوم"></div><h3>عقد فضي بتعليقات نجوم</h3><p>تفاصيل نجوم فضية مميزة</p><div class="price">5,500 جنيه</div></article>
+        <article class="product"><div class="product-art" role="img" aria-label="عقد ورود بألوان فضي وذهبي"></div><h3>عقد ورود بألوان فضي وذهبي</h3><p>ورود متداخلة بلمسة ناعمة</p><div class="price">3,950 جنيه</div></article>
       </div>
     </section>
     <section class="note" id="about"><h2>الجمال في التفاصيل</h2><p>Silver Mania Store — مساحة لكل محبّات أناقة الفضة.</p></section>
