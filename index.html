@@ -45,6 +45,28 @@
     .product-art img{width:100%;height:100%;object-fit:cover;display:block}\n    .product h3{font-size:14px;font-weight:600;margin:8px 0}
     .product p{font-size:11px;color:var(--muted);margin:0 0 9px}
     .price{font-size:15px;font-weight:800;color:var(--accent)}
+    .add-cart{display:block;width:100%;margin-top:12px;padding:10px;border:1px solid var(--ink);background:var(--ink);color:#fff;font-size:12px;transition:.2s}
+    .add-cart:hover{background:var(--accent);border-color:var(--accent)}
+    .cart-count{display:inline-grid;place-items:center;min-width:20px;height:20px;margin-right:4px;padding:0 5px;border-radius:20px;background:var(--ink);color:white}
+    .modal-backdrop{position:fixed;inset:0;background:#17181699;z-index:20;display:none;align-items:center;justify-content:center;padding:16px}
+    .modal-backdrop.open{display:flex}
+    .cart-panel{background:#fff;width:min(560px,100%);max-height:90vh;overflow:auto;padding:24px;position:relative;box-shadow:0 15px 60px #0003}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
+    .modal-head h2{font-size:22px;margin:0;font-weight:600}
+    .close-cart{border:0;background:transparent;font-size:26px;padding:0 8px}
+    .cart-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);align-items:center}
+    .cart-row strong{font-size:13px}.cart-row small{display:block;color:var(--muted);margin-top:4px}
+    .qty-controls{display:flex;align-items:center;gap:9px;direction:ltr}
+    .qty-controls button{width:28px;height:28px;border:1px solid var(--line);background:#fff}
+    .remove-item{border:0;background:none;color:#9a5148;font-size:11px;margin-top:5px;padding:0}
+    .cart-total{display:flex;justify-content:space-between;font-weight:800;padding:18px 0;font-size:16px}
+    .empty-cart{text-align:center;color:var(--muted);padding:30px 0;font-size:13px}
+    .checkout-form{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:10px}
+    .checkout-form h3{font-size:16px;margin:0 0 4px}
+    .checkout-form input,.checkout-form textarea{width:100%;padding:11px;border:1px solid #ddd;background:#fff;font:inherit;font-size:12px;direction:rtl}
+    .checkout-form textarea{min-height:75px;resize:vertical}
+    .checkout-submit{background:var(--ink);color:white;border:0;padding:13px;font-size:13px}
+    .checkout-hint{font-size:10px;color:var(--muted);line-height:1.8;margin:0}
     .note{background:#eeece7;text-align:center;padding:54px 24px;margin-bottom:0}.note h2{font-size:24px;font-weight:600;margin:0 0 10px}.note p{font-size:12px;color:var(--muted);margin:0}
     footer{background:#292a28;color:#fff;padding:30px 24px;text-align:center;font-size:11px}footer .brand{font-size:17px;margin-bottom:8px}footer p{color:#c6c5c0;margin:0}
     @media(max-width:900px){.products{grid-template-columns:repeat(2,1fr)}}\n    @media(max-width:700px){.nav{padding:14px 17px}.links{gap:13px;font-size:11px}.links a:nth-child(3){display:none}.brand{font-size:16px}.cart{padding:7px 10px}.hero{grid-template-columns:1fr;margin:15px auto 55px;gap:15px}.hero-copy{padding:35px 4px 10px}.hero-art{min-height:300px;grid-row:1}.ring{width:135px;height:135px;border-width:11px}.ring:after{left:43px}.categories{grid-template-columns:1fr}.category{min-height:145px}.section-head{align-items:start;flex-direction:column}.section-head h2{font-size:23px}}
@@ -56,7 +78,7 @@
     <nav class="nav" aria-label="القائمة الرئيسية">
       <a class="brand" href="#">SILVER <span>MANIA</span></a>
       <div class="links"><a href="#home">الرئيسية</a><a href="#collections">المجموعات</a><a href="#products">المنتجات</a><a href="#about">عن المتجر</a></div>
-      <button class="cart" type="button" aria-label="سلة التسوق">السلة <span id="cart-count">0</span></button>
+      <button class="cart" type="button" id="open-cart" aria-label="فتح سلة التسوق">السلة <span class="cart-count" id="cart-count">0</span></button>
     </nav>
   </header>
   <main id="home">
@@ -83,18 +105,104 @@
     <section class="section" id="products">
       <div class="section-head"><div><div class="eyebrow">OUR PICKS</div><h2>قطع مختارة ليكي</h2></div><p>تفاصيل مميزة من Silver Mania</p></div>
       <div class="products">
-        <article class="product"><div class="product-art"><img src="images/product-1.jpg" alt="عقد فضي بتفاصيل ذهبية وحجر أخضر"></div><h3>عقد فضي بتفاصيل ذهبية وحجر أخضر</h3><p>تصميم أنيق بلمسات ذهبية وخضراء</p><div class="price">3,900 جنيه</div></article>
+        <article class="product"><div class="product-art"><img src="images/product-1.jpg" alt="عقد فضي بتفاصيل ذهبية وحجر أخضر"></div><h3>عقد فضي بتفاصيل ذهبية وحجر أخضر</h3><p>تصميم أنيق بلمسات ذهبية وخضراء</p><div class="price">3,900 جنيه</div><button class="add-cart" type="button" data-product="1">أضيفي إلى السلة</button><button class="add-cart" type="button" data-product="0">أضيفي إلى السلة</button></article>
         <article class="product"><div class="product-art"><img src="images/product-2.jpg" alt="عقد فضي بتفاصيل ذهبية وحجر أحمر"></div><h3>عقد فضي بتفاصيل ذهبية وحجر أحمر</h3><p>تصميم أنيق بلمسات ذهبية وحمراء</p><div class="price">3,900 جنيه</div></article>
-        <article class="product"><div class="product-art"><img src="images/product-3.jpg" alt="عقد فضي بتعليقات نجوم"></div><h3>عقد فضي بتعليقات نجوم</h3><p>تفاصيل نجوم فضية مميزة</p><div class="price">5,500 جنيه</div></article>
-        <article class="product"><div class="product-art"><img src="images/product-4.jpg" alt="عقد ورود بألوان فضي وذهبي"></div><h3>عقد ورود بألوان فضي وذهبي</h3><p>ورود متداخلة بلمسة ناعمة</p><div class="price">3,950 جنيه</div></article>
+        <article class="product"><div class="product-art"><img src="images/product-3.jpg" alt="عقد فضي بتعليقات نجوم"></div><h3>عقد فضي بتعليقات نجوم</h3><p>تفاصيل نجوم فضية مميزة</p><div class="price">5,500 جنيه</div><button class="add-cart" type="button" data-product="2">أضيفي إلى السلة</button></article>
+        <article class="product"><div class="product-art"><img src="images/product-4.jpg" alt="عقد ورود بألوان فضي وذهبي"></div><h3>عقد ورود بألوان فضي وذهبي</h3><p>ورود متداخلة بلمسة ناعمة</p><div class="price">3,950 جنيه</div><button class="add-cart" type="button" data-product="3">أضيفي إلى السلة</button></article>
       </div>
     </section>
     <section class="note" id="about"><h2>الجمال في التفاصيل</h2><p>Silver Mania Store — مساحة لكل محبّات أناقة الفضة.</p></section>
   </main>
-  <footer id="contact"><div class="brand">SILVER <span>MANIA</span></div><p>© <span id="year"></span> Silver Mania Store. جميع الحقوق محفوظة.</p></footer>
+<div class="modal-backdrop" id="cart-modal" aria-hidden="true">
+    <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <div class="modal-head"><h2 id="cart-title">سلة التسوق</h2><button class="close-cart" id="close-cart" type="button" aria-label="إغلاق">×</button></div>
+      <div id="cart-items"></div>
+      <div id="cart-summary"></div>
+      <form class="checkout-form" id="checkout-form">
+        <h3>بيانات استلام الطلب</h3>
+        <input name="customer" placeholder="الاسم بالكامل" autocomplete="name" required>
+        <input name="phone" type="tel" placeholder="رقم الموبايل" autocomplete="tel" required>
+        <textarea name="address" placeholder="العنوان بالتفصيل" required></textarea>
+        <textarea name="notes" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+        <button class="checkout-submit" type="submit">إرسال الطلب عبر واتساب</button>
+        <p class="checkout-hint">سيتم فتح واتساب برسالة جاهزة بتفاصيل طلبك. راجعي الرسالة واختاري جهة التواصل لإرسالها.</p>
+      </form>
+    </section>
+  </div>
+    <footer id="contact"><div class="brand">SILVER <span>MANIA</span></div><p>© <span id="year"></span> Silver Mania Store. جميع الحقوق محفوظة.</p></footer>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-    document.querySelector('.cart').addEventListener('click', () => alert('هنضيف تفاصيل السلة مع تجهيز المنتجات.'));
+    const catalog = [
+      {name:'عقد فضي بتفاصيل ذهبية وحجر أخضر',price:3900},
+      {name:'عقد فضي بتفاصيل ذهبية وحجر أحمر',price:3900},
+      {name:'عقد فضي بتعليقات نجوم',price:5500},
+      {name:'عقد ورود بألوان فضي وذهبي',price:3950}
+    ];
+    const cart = [];
+    const modal = document.getElementById('cart-modal');
+    const itemsBox = document.getElementById('cart-items');
+    const summaryBox = document.getElementById('cart-summary');
+    const count = document.getElementById('cart-count');
+    const money = n => n.toLocaleString('en-US') + ' جنيه';
+    function renderCart(){
+      const totalQty = cart.reduce((sum,item)=>sum+item.qty,0);
+      const total = cart.reduce((sum,item)=>sum+item.qty*item.price,0);
+      count.textContent = totalQty;
+      if(!cart.length){
+        itemsBox.innerHTML = '<p class="empty-cart">السلة لسه فاضية. اختاري قطعة تعجبك من المنتجات.</p>';
+        summaryBox.innerHTML = '';
+        document.getElementById('checkout-form').style.display='none';
+        return;
+      }
+      document.getElementById('checkout-form').style.display='grid';
+      itemsBox.innerHTML = cart.map((item,index)=>`
+        <div class="cart-row">
+          <div><strong>${item.name}</strong><small>${money(item.price)} للقطعة</small><button class="remove-item" type="button" data-remove="${index}">حذف</button></div>
+          <div class="qty-controls"><button type="button" data-change="${index}" data-delta="-1" aria-label="تقليل الكمية">−</button><span>${item.qty}</span><button type="button" data-change="${index}" data-delta="1" aria-label="زيادة الكمية">+</button></div>
+        </div>`).join('');
+      summaryBox.innerHTML = '<div class="cart-total"><span>الإجمالي</span><span>'+money(total)+'</span></div>';
+    }
+    function openCart(){renderCart();modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+    function closeCart(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+    document.querySelectorAll('[data-product]').forEach(button=>button.addEventListener('click',()=>{
+      const product=catalog[Number(button.dataset.product)];
+      const found=cart.find(item=>item.name===product.name);
+      if(found) found.qty++; else cart.push({...product,qty:1});
+      renderCart();
+      button.textContent='اتضافت للسلة ✓';
+      setTimeout(()=>button.textContent='أضيفي إلى السلة',1300);
+    }));
+    document.getElementById('open-cart').addEventListener('click',openCart);
+    document.getElementById('close-cart').addEventListener('click',closeCart);
+    modal.addEventListener('click',event=>{if(event.target===modal)closeCart();});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')closeCart();});
+    itemsBox.addEventListener('click',event=>{
+      const remove=event.target.closest('[data-remove]');
+      const change=event.target.closest('[data-change]');
+      if(remove){cart.splice(Number(remove.dataset.remove),1);renderCart();}
+      if(change){
+        const index=Number(change.dataset.change);
+        cart[index].qty+=Number(change.dataset.delta);
+        if(cart[index].qty<1)cart.splice(index,1);
+        renderCart();
+      }
+    });
+    document.getElementById('checkout-form').addEventListener('submit',event=>{
+      event.preventDefault();
+      if(!cart.length)return;
+      const form=new FormData(event.currentTarget);
+      const total=cart.reduce((sum,item)=>sum+item.qty*item.price,0);
+      const lines=cart.map(item=>'• '+item.name+' — '+item.qty+' × '+money(item.price)).join('\n');
+      const message='طلب جديد من Silver Mania%0A'.replace('%0A','\n')+
+        'الاسم: '+form.get('customer')+'\n'+
+        'الموبايل: '+form.get('phone')+'\n'+
+        'العنوان: '+form.get('address')+'\n'+
+        'المنتجات:\n'+lines+'\n'+
+        'الإجمالي: '+money(total)+'\n'+
+        'ملاحظات: '+(form.get('notes')||'لا يوجد');
+      window.open('https://wa.me/?text='+encodeURIComponent(message),'_blank','noopener');
+    });
+    renderCart();
   </script>
 </body>
 </html>
