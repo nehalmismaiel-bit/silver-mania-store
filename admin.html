@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f5f1">
+<title>إدارة المنتجات | Silver Mania</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+:root{--ink:#252623;--muted:#777873;--paper:#f7f5f1;--line:#e8e5df;--accent:#8c8174}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Cairo',Arial,sans-serif}
+header{background:#292a28;color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-weight:800;letter-spacing:1px;direction:ltr}.brand span{font-weight:400;color:#c9bfb2}
+a{color:inherit;text-decoration:none}.wrap{max-width:900px;margin:35px auto;padding:0 18px}
+.card{background:#fff;border:1px solid var(--line);padding:22px;margin-bottom:18px}
+h1{font-size:25px;margin:0 0 6px}h2{font-size:19px;margin:0 0 16px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}
+input,textarea{width:100%;padding:12px;border:1px solid #ddd;background:#fff;font:inherit;font-size:13px;border-radius:3px}
+textarea{min-height:75px;resize:vertical}
+button{font:inherit;cursor:pointer;border:0;padding:11px 18px;background:var(--ink);color:white;border-radius:3px}
+button.secondary{background:#eeeae4;color:var(--ink)}button.danger{background:#8b3f37}
+button:disabled{opacity:.55;cursor:wait}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.message{font-size:13px;line-height:1.8;margin:12px 0 0;white-space:pre-wrap}.message.error{color:#a33}.message.ok{color:#28734c}
+.hidden{display:none!important}
+.product-row{display:grid;grid-template-columns:80px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.product-row img{width:80px;height:80px;object-fit:contain;background:#f7f5f1}
+.product-row strong{display:block;font-size:14px}.product-row small{color:var(--muted)}
+.product-actions{display:flex;gap:7px;flex-wrap:wrap}.product-actions button{padding:8px 11px;font-size:12px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+@media(max-width:560px){.product-row{grid-template-columns:64px 1fr}.product-row img{width:64px;height:64px}.product-actions{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="./">SILVER <span>MANIA</span></a><a href="./">العودة للمتجر ←</a></header>
+<main class="wrap">
+<section class="card" id="login-card">
+<h1>لوحة إدارة Silver Mania</h1><p class="sub">سجّلي الدخول ببريد الإدارة لإضافة المنتجات وتعديلها.</p>
+<form id="login-form">
+<label for="email">البريد الإلكتروني</label><input id="email" type="email" value="nehal.m.ismaiel@gmail.com" autocomplete="username" required>
+<label for="password">كلمة المرور</label><input id="password" type="password" autocomplete="current-password" required>
+<div class="actions"><button id="login-button" type="submit">تسجيل الدخول</button></div>
+<p class="message" id="login-message" role="status"></p>
+</form>
+</section>
+<section id="admin-area" class="hidden">
+<div class="card topline"><div><h1>إدارة المنتجات</h1><p class="sub">أضيفي المنتجات وعدّليها واحذفيها من هنا.</p></div><button class="secondary" id="logout-button" type="button">تسجيل الخروج</button></div>
+<section class="card">
+<h2 id="form-title">إضافة منتج جديد</h2>
+<form id="product-form">
+<input id="product-id" type="hidden">
+<label for="product-name">اسم المنتج</label><input id="product-name" maxlength="120" required>
+<label for="product-price">السعر بالجنيه</label><input id="product-price" type="number" min="0" step="0.01" required>
+<label for="product-description">وصف المنتج (اختياري)</label><textarea id="product-description"></textarea>
+<label for="product-image">صورة المنتج</label><input id="product-image" type="file" accept="image/jpeg,image/png,image/webp">
+<p class="sub">اختاري صورة واضحة بصيغة JPG أو PNG أو WebP. عند تعديل منتج، اتركي خانة الصورة فارغة للاحتفاظ بالصورة الحالية.</p>
+<div class="actions"><button id="save-button" type="submit">حفظ المنتج</button><button class="secondary hidden" id="cancel-edit" type="button">إلغاء التعديل</button></div>
+<p class="message" id="save-message" role="status"></p>
+</form>
+</section>
+<section class="card"><h2>المنتجات الحالية</h2><div id="product-list"><p class="sub">جارٍ تحميل المنتجات…</p></div></section>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://mqeqlisjswpwgpjesiii.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_IROIfMPB9jHmkxcYIx2TVg_Yg0W5XnS';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const loginCard=document.getElementById('login-card'),adminArea=document.getElementById('admin-area');
+const loginMessage=document.getElementById('login-message'),saveMessage=document.getElementById('save-message');
+const productList=document.getElementById('product-list');
+let currentProducts=[];
+const say=(el,msg,type='')=>{el.textContent=msg;el.className='message '+type;};
+function showAdmin(session){loginCard.classList.toggle('hidden',!!session);adminArea.classList.toggle('hidden',!session);if(session)loadProducts();}
+async function loadProducts(){
+ productList.innerHTML='<p class="sub">جارٍ تحميل المنتجات…</p>';
+ const {data,error}=await db.from('products').select('*').order('created_at',{ascending:false});
+ if(error){productList.textContent='تعذر تحميل المنتجات: '+error.message;return;}
+ currentProducts=data||[];
+ if(!currentProducts.length){productList.innerHTML='<p class="sub">لا توجد منتجات محفوظة بعد. أضيفي أول منتج من النموذج أعلاه.</p>';return;}
+ productList.innerHTML=currentProducts.map(p=>'<div class="product-row"><img src="'+(p.image_url||'')+'" alt=""><div><strong>'+escapeHtml(p.name)+'</strong><small>'+Number(p.price).toLocaleString('en-US')+' جنيه</small></div><div class="product-actions"><button class="secondary" type="button" data-edit="'+p.id+'">تعديل</button><button class="danger" type="button" data-delete="'+p.id+'">حذف</button></div></div>').join('');
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function resetForm(){document.getElementById('product-form').reset();document.getElementById('product-id').value='';document.getElementById('form-title').textContent='إضافة منتج جديد';document.getElementById('save-button').textContent='حفظ المنتج';document.getElementById('cancel-edit').classList.add('hidden');say(saveMessage,'');}
+document.getElementById('login-form').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=document.getElementById('login-button');btn.disabled=true;say(loginMessage,'جارٍ تسجيل الدخول…');
+ const {data,error}=await db.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});
+ btn.disabled=false;if(error){say(loginMessage,'تعذر تسجيل الدخول: '+error.message,'error');return;}
+ say(loginMessage,'تم تسجيل الدخول بنجاح.','ok');showAdmin(data.session);
+});
+document.getElementById('logout-button').addEventListener('click',async()=>{await db.auth.signOut();showAdmin(null);});
+document.getElementById('cancel-edit').addEventListener('click',resetForm);
+document.getElementById('product-form').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=document.getElementById('save-button');btn.disabled=true;say(saveMessage,'جارٍ حفظ المنتج…');
+ const id=document.getElementById('product-id').value;
+ const name=document.getElementById('product-name').value.trim();
+ const price=Number(document.getElementById('product-price').value);
+ const description=document.getElementById('product-description').value.trim();
+ const file=document.getElementById('product-image').files[0];
+ let image_url=currentProducts.find(p=>String(p.id)===id)?.image_url||null;
+ try{
+  if(file){
+   if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('اختاري صورة JPG أو PNG أو WebP.');
+   if(file.size>8*1024*1024)throw new Error('حجم الصورة أكبر من 8 ميجابايت. اختاري صورة أصغر.');
+   const ext=file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+   const path=Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
+   const {error:uploadError}=await db.storage.from('product-images').upload(path,file,{cacheControl:'3600',upsert:false});
+   if(uploadError)throw uploadError;
+   const {data:publicData}=db.storage.from('product-images').getPublicUrl(path);image_url=publicData.publicUrl;
+  }
+  if(!id&&!image_url)throw new Error('اختاري صورة للمنتج قبل الحفظ.');
+  const payload={name,price,description,image_url};
+  const result=id?await db.from('products').update(payload).eq('id',id):await db.from('products').insert(payload);
+  if(result.error)throw result.error;
+  say(saveMessage,id?'تم تعديل المنتج بنجاح.':'تمت إضافة المنتج بنجاح.','ok');resetForm();await loadProducts();
+ }catch(err){say(saveMessage,'لم يتم الحفظ: '+(err.message||'حدث خطأ غير متوقع'),'error');}
+ finally{btn.disabled=false;}
+});
+productList.addEventListener('click',async e=>{
+ const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
+ if(edit){const p=currentProducts.find(x=>String(x.id)===edit.dataset.edit);if(!p)return;document.getElementById('product-id').value=p.id;document.getElementById('product-name').value=p.name;document.getElementById('product-price').value=p.price;document.getElementById('product-description').value=p.description||'';document.getElementById('form-title').textContent='تعديل المنتج';document.getElementById('save-button').textContent='حفظ التعديلات';document.getElementById('cancel-edit').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+ if(del){const p=currentProducts.find(x=>String(x.id)===del.dataset.delete);if(!p||!confirm('هل تريدين حذف "'+p.name+'"؟'))return;const {error}=await db.from('products').delete().eq('id',p.id);if(error){alert('تعذر الحذف: '+error.message);return;}await loadProducts();}
+});
+db.auth.getSession().then(({data})=>showAdmin(data.session));
+</script>
+</body>
+</html>
