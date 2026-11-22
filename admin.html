@@ -110,7 +110,7 @@ document.getElementById('product-form').addEventListener('submit',async e=>{
    const {data:publicData}=db.storage.from('product-images').getPublicUrl(path);image_url=publicData.publicUrl;
   }
   if(!id&&!image_url)throw new Error('اختاري صورة للمنتج قبل الحفظ.');
-  const payload={name,price,description,image_url};
+  const payload={name,name_en:name,name_ar:name,price,description,image_url};
   const result=id?await db.from('products').update(payload).eq('id',id):await db.from('products').insert(payload);
   if(result.error)throw result.error;
   say(saveMessage,id?'تم تعديل المنتج بنجاح.':'تمت إضافة المنتج بنجاح.','ok');resetForm();await loadProducts();
