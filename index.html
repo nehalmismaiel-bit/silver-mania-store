@@ -107,7 +107,13 @@ async function loadProductsFromDatabase(){
   try{
     const {data,error}=await supabaseClient.from('products').select('id,name,price,image_url,description').order('created_at',{ascending:false});
     if(error) throw error;
-    if(data && data.length){catalog=data;renderProducts();}
+    if(data && data.length){
+      const byName=new Map(data.map(p=>[p.name,p]));
+      const original=fallbackCatalog.map(p=>byName.get(p.name)||p);
+      const added=data.filter(p=>!fallbackCatalog.some(old=>old.name===p.name));
+      catalog=[...original,...added];
+      renderProducts();
+    }
   }catch(error){console.warn('تعذر تحميل المنتجات من قاعدة البيانات؛ سيتم عرض القائمة الحالية.',error.message);}
 }
 const cart=[],modal=document.getElementById('cart-modal'),itemsBox=document.getElementById('cart-items'),summaryBox=document.getElementById('cart-summary'),count=document.getElementById('cart-count');
