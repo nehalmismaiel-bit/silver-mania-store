@@ -80,8 +80,12 @@ footer{background:#292a28;color:#fff;padding:28px 24px;text-align:center;font-si
 <form class="checkout-form" id="checkout-form"><h3>بيانات استلام الطلب</h3><input name="customer" placeholder="الاسم بالكامل" autocomplete="name" required><input name="phone" type="tel" placeholder="رقم الموبايل" autocomplete="tel" required><textarea name="address" placeholder="العنوان بالتفصيل" required></textarea><textarea name="notes" placeholder="ملاحظات إضافية (اختياري)"></textarea><button class="checkout-submit" type="submit">إرسال الطلب عبر واتساب</button><p class="checkout-hint">سيتم فتح واتساب برسالة جاهزة بتفاصيل طلبك. راجعي الرسالة قبل إرسالها.</p></form>
 </section></div>
 <footer id="contact"><div class="brand">SILVER <span>MANIA</span></div><p>© <span id="year"></span> Silver Mania Store. جميع الحقوق محفوظة.</p></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const catalog=[
+const SUPABASE_URL='https://mqeqlisjswpwgpjesiii.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_IROIfMPB9jHmkxcYIx2TVg_Yg0W5XnS';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const fallbackCatalog=[
 {name:'كولييه بزخارف',price:4250,image:'images/product-1.jpg'},
 {name:'سلسلة وردات بطلاء ذهبي',price:4000,image:'images/product-2.jpg'},
 {name:'حلق فرعوني عودت عيني',price:4800,image:'images/product-3.jpg'},
@@ -93,10 +97,19 @@ const catalog=[
 {name:'حلق لك في القلب مستقر',price:1550,image:'images/product-09.jpg'},
 {name:'حلق أنت عمري',price:1200,image:'images/product-10.jpg'}
 ];
+let catalog=[...fallbackCatalog];
 document.getElementById('year').textContent=new Date().getFullYear();
 const productList=document.getElementById('product-list');
 const money=n=>n.toLocaleString('en-US')+' جنيه';
-productList.innerHTML=catalog.map((p,i)=>'<article class="product"><div class="product-art"><img src="'+p.image+'" alt="'+p.name+'" loading="lazy"></div><h3>'+p.name+'</h3><div class="price">'+money(p.price)+'</div><button class="add-cart" type="button" data-product="'+i+'">أضيفي إلى السلة</button></article>').join('');
+function renderProducts(){productList.innerHTML=catalog.map((p,i)=>'<article class="product"><div class="product-art"><img src="'+(p.image_url||p.image||'')+'" alt="'+p.name+'" loading="lazy"></div><h3>'+p.name+'</h3><div class="price">'+money(Number(p.price))+'</div><button class="add-cart" type="button" data-product="'+i+'">أضيفي إلى السلة</button></article>').join('');}
+renderProducts();
+async function loadProductsFromDatabase(){
+  try{
+    const {data,error}=await supabaseClient.from('products').select('id,name,price,image_url,description').order('created_at',{ascending:false});
+    if(error) throw error;
+    if(data && data.length){catalog=data;renderProducts();}
+  }catch(error){console.warn('تعذر تحميل المنتجات من قاعدة البيانات؛ سيتم عرض القائمة الحالية.',error.message);}
+}
 const cart=[],modal=document.getElementById('cart-modal'),itemsBox=document.getElementById('cart-items'),summaryBox=document.getElementById('cart-summary'),count=document.getElementById('cart-count');
 function renderCart(){const qty=cart.reduce((s,x)=>s+x.qty,0),total=cart.reduce((s,x)=>s+x.qty*x.price,0);count.textContent=qty;if(!cart.length){itemsBox.innerHTML='<p class="empty-cart">السلة لسه فاضية. اختاري قطعة تعجبك من المنتجات.</p>';summaryBox.innerHTML='';document.getElementById('checkout-form').style.display='none';return;}document.getElementById('checkout-form').style.display='grid';itemsBox.innerHTML=cart.map((x,i)=>'<div class="cart-row"><div><strong>'+x.name+'</strong><small>'+money(x.price)+' للقطعة</small><button class="remove-item" type="button" data-remove="'+i+'">حذف</button></div><div class="qty-controls"><button type="button" data-change="'+i+'" data-delta="-1">−</button><span>'+x.qty+'</span><button type="button" data-change="'+i+'" data-delta="1">+</button></div></div>').join('');summaryBox.innerHTML='<div class="cart-total"><span>الإجمالي</span><span>'+money(total)+'</span></div>';}
 function openCart(){renderCart();modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
@@ -106,5 +119,6 @@ document.getElementById('open-cart').addEventListener('click',openCart);document
 itemsBox.addEventListener('click',e=>{const r=e.target.closest('[data-remove]'),c=e.target.closest('[data-change]');if(r){cart.splice(Number(r.dataset.remove),1);renderCart()}if(c){const i=Number(c.dataset.change);cart[i].qty+=Number(c.dataset.delta);if(cart[i].qty<1)cart.splice(i,1);renderCart()}});
 document.getElementById('checkout-form').addEventListener('submit',e=>{e.preventDefault();if(!cart.length)return;const f=new FormData(e.currentTarget),total=cart.reduce((s,x)=>s+x.qty*x.price,0),lines=cart.map(x=>'• '+x.name+' — '+x.qty+' × '+money(x.price)).join('\n');const msg='طلب جديد من Silver Mania\nالاسم: '+f.get('customer')+'\nالموبايل: '+f.get('phone')+'\nالعنوان: '+f.get('address')+'\nالمنتجات:\n'+lines+'\nالإجمالي: '+money(total)+'\nملاحظات: '+(f.get('notes')||'لا يوجد');window.open('https://wa.me/201030442837?text='+encodeURIComponent(msg),'_blank','noopener')});
 renderCart();
+loadProductsFromDatabase();
 </script>
 </body></html>
