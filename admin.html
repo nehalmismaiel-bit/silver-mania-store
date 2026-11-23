@@ -111,9 +111,11 @@ document.getElementById('product-form').addEventListener('submit',async e=>{
   }
   if(!id&&!image_url)throw new Error('اختاري صورة للمنتج قبل الحفظ.');
   const payload={name,name_en:name,name_ar:name,price,description,image_url};
-  const result=id?await db.from('products').update(payload).eq('id',id):await db.from('products').insert(payload);
+  const result=id?await db.from('products').update(payload).eq('id',id).select('id,image_url').maybeSingle():await db.from('products').insert(payload).select('id,image_url').maybeSingle();
   if(result.error)throw result.error;
-  say(saveMessage,id?'تم تعديل المنتج بنجاح.':'تمت إضافة المنتج بنجاح.','ok');resetForm();await loadProducts();
+  if(!result.data)throw new Error('لم يتم تحديث سجل المنتج. راجعي صلاحيات UPDATE وسياسة RLS في Supabase.');
+  if(file&&!result.data.image_url)throw new Error('تم رفع الصورة لكن رابطها لم يُحفظ في products.image_url.');
+  resetForm();await loadProducts();say(saveMessage,id?'تم تعديل المنتج بنجاح وتم حفظ رابط الصورة.':'تمت إضافة المنتج بنجاح.','ok');
  }catch(err){say(saveMessage,'لم يتم الحفظ: '+(err.message||'حدث خطأ غير متوقع'),'error');}
  finally{btn.disabled=false;}
 });
