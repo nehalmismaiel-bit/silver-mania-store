@@ -16,7 +16,7 @@ a{color:inherit;text-decoration:none}.wrap{max-width:900px;margin:35px auto;padd
 h1{font-size:25px;margin:0 0 6px}h2{font-size:19px;margin:0 0 16px}
 .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
 label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}
-input,textarea{width:100%;padding:12px;border:1px solid #ddd;background:#fff;font:inherit;font-size:13px;border-radius:3px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;background:#fff;font:inherit;font-size:13px;border-radius:3px}
 textarea{min-height:75px;resize:vertical}
 button{font:inherit;cursor:pointer;border:0;padding:11px 18px;background:var(--ink);color:white;border-radius:3px}
 button.secondary{background:#eeeae4;color:var(--ink)}button.danger{background:#8b3f37}
@@ -52,6 +52,7 @@ button:disabled{opacity:.55;cursor:wait}
 <input id="product-id" type="hidden">
 <label for="product-name">اسم المنتج</label><input id="product-name" maxlength="120" required>
 <label for="product-price">السعر بالجنيه</label><input id="product-price" type="number" min="0" step="0.01" required>
+<label for="product-category">القسم</label><select id="product-category" required><option value="الخواتم">الخواتم</option><option value="السلاسل والكولييهات">السلاسل والكولييهات</option><option value="الحلقان">الحلقان</option><option value="الأساور">الأساور</option></select>
 <label for="product-description">وصف المنتج (اختياري)</label><textarea id="product-description"></textarea>
 <label for="product-image">صورة المنتج</label><input id="product-image" type="file" accept="image/jpeg,image/png,image/webp">
 <p class="sub">اختاري صورة واضحة بصيغة JPG أو PNG أو WebP. عند تعديل منتج، اتركي خانة الصورة فارغة للاحتفاظ بالصورة الحالية.</p>
@@ -79,7 +80,7 @@ async function loadProducts(){
  if(error){productList.textContent='تعذر تحميل المنتجات: '+error.message;return;}
  currentProducts=data||[];
  if(!currentProducts.length){productList.innerHTML='<p class="sub">لا توجد منتجات محفوظة بعد. أضيفي أول منتج من النموذج أعلاه.</p>';return;}
- productList.innerHTML=currentProducts.map(p=>'<div class="product-row"><img src="'+(p.image_url||'')+'" alt=""><div><strong>'+escapeHtml(p.name)+'</strong><small>'+Number(p.price).toLocaleString('en-US')+' جنيه</small></div><div class="product-actions"><button class="secondary" type="button" data-edit="'+p.id+'">تعديل</button><button class="danger" type="button" data-delete="'+p.id+'">حذف</button></div></div>').join('');
+ productList.innerHTML=currentProducts.map(p=>'<div class="product-row"><img src="'+(p.image_url||'')+'" alt=""><div><strong>'+escapeHtml(p.name)+'</strong><small>'+Number(p.price).toLocaleString('en-US')+' جنيه</small><small>القسم: '+escapeHtml(p.category||'غير محدد')+'</small></div><div class="product-actions"><button class="secondary" type="button" data-edit="'+p.id+'">تعديل</button><button class="danger" type="button" data-delete="'+p.id+'">حذف</button></div></div>').join('');
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function resetForm(){document.getElementById('product-form').reset();document.getElementById('product-id').value='';document.getElementById('form-title').textContent='إضافة منتج جديد';document.getElementById('save-button').textContent='حفظ المنتج';document.getElementById('cancel-edit').classList.add('hidden');say(saveMessage,'');}
@@ -97,6 +98,7 @@ document.getElementById('product-form').addEventListener('submit',async e=>{
  const name=document.getElementById('product-name').value.trim();
  const price=Number(document.getElementById('product-price').value);
  const description=document.getElementById('product-description').value.trim();
+ const category=document.getElementById('product-category').value;
  const file=document.getElementById('product-image').files[0];
  let image_url=currentProducts.find(p=>String(p.id)===id)?.image_url||null;
  try{
@@ -110,7 +112,7 @@ document.getElementById('product-form').addEventListener('submit',async e=>{
    const {data:publicData}=db.storage.from('product-images').getPublicUrl(path);image_url=publicData.publicUrl;
   }
   if(!id&&!image_url)throw new Error('اختاري صورة للمنتج قبل الحفظ.');
-  const payload={name,name_en:name,name_ar:name,price,description,image_url};
+  const payload={name,name_en:name,name_ar:name,price,description,image_url,category};
   const result=id?await db.from('products').update(payload).eq('id',id).select('id,image_url').maybeSingle():await db.from('products').insert(payload).select('id,image_url').maybeSingle();
   if(result.error)throw result.error;
   if(!result.data)throw new Error('لم يتم تحديث سجل المنتج. راجعي صلاحيات UPDATE وسياسة RLS في Supabase.');
@@ -121,7 +123,7 @@ document.getElementById('product-form').addEventListener('submit',async e=>{
 });
 productList.addEventListener('click',async e=>{
  const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
- if(edit){const p=currentProducts.find(x=>String(x.id)===edit.dataset.edit);if(!p)return;document.getElementById('product-id').value=p.id;document.getElementById('product-name').value=p.name;document.getElementById('product-price').value=p.price;document.getElementById('product-description').value=p.description||'';document.getElementById('form-title').textContent='تعديل المنتج';document.getElementById('save-button').textContent='حفظ التعديلات';document.getElementById('cancel-edit').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+ if(edit){const p=currentProducts.find(x=>String(x.id)===edit.dataset.edit);if(!p)return;document.getElementById('product-id').value=p.id;document.getElementById('product-name').value=p.name;document.getElementById('product-price').value=p.price;document.getElementById('product-description').value=p.description||'';document.getElementById('product-category').value=p.category||'الخواتم';document.getElementById('form-title').textContent='تعديل المنتج';document.getElementById('save-button').textContent='حفظ التعديلات';document.getElementById('cancel-edit').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
  if(del){const p=currentProducts.find(x=>String(x.id)===del.dataset.delete);if(!p||!confirm('هل تريدين حذف "'+p.name+'"؟'))return;const {error}=await db.from('products').delete().eq('id',p.id);if(error){alert('تعذر الحذف: '+error.message);return;}await loadProducts();}
 });
 db.auth.getSession().then(({data})=>showAdmin(data.session));
