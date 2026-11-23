@@ -28,9 +28,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.35;margin:16px 0;font-weight:600
 .section{max-width:1180px;margin:0 auto;padding:0 24px 70px}
 .section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:23px;gap:15px}
 .section-head h2{font-size:27px;font-weight:600;margin:7px 0 0}.section-head p{color:var(--muted);font-size:12px;margin:0}
-.categories{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.categories{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .category{min-height:155px;padding:23px;display:flex;flex-direction:column;justify-content:end;background:linear-gradient(135deg,#e8e6e1,#c9c9c5)}
-.category:nth-child(2){background:linear-gradient(135deg,#d8d5cf,#aaa9a4)}.category:nth-child(3){background:linear-gradient(135deg,#e6e1dc,#c6bdb3)}
+.category:nth-child(2){background:linear-gradient(135deg,#d8d5cf,#aaa9a4)}.category:nth-child(3){background:linear-gradient(135deg,#e6e1dc,#c6bdb3)}.category:nth-child(4){background:linear-gradient(135deg,#e3e1dc,#bdb9b0)}.category.active{outline:2px solid var(--ink);outline-offset:2px}
 .category strong{font-size:20px;font-weight:600}.category span{font-size:11px;color:#555;margin-top:5px}
 .products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .product{background:#fff;border:1px solid var(--line);padding:12px;text-align:center;display:flex;flex-direction:column}
@@ -70,8 +70,8 @@ footer{background:#292a28;color:#fff;padding:28px 24px;text-align:center;font-si
 <section class="hero"><div class="hero-copy"><div class="eyebrow">SILVER, WITH LOVE</div><h1>أناقة من فضة،<br>تليق بيكي.</h1><p>قطع فضية تضيف لمسة هادئة ومميزة لكل يوم. اكتشفي مجموعتنا واختاري التفاصيل اللي تشبهك.</p><a class="primary" href="#products">تسوّقي المنتجات</a></div>
 <div class="hero-art" role="img" aria-label="تصميم فني تجريدي"><div class="hero-mark">✧</div><div class="art-label">TIMELESS DETAILS</div></div></section>
 <section class="section" id="collections"><div class="section-head"><div><div class="eyebrow">FIND YOUR STYLE</div><h2>تسوّقي حسب المجموعة</h2></div><p>اختاري اللمسة الأقرب لذوقك</p></div>
-<div class="categories"><a class="category" href="#products"><strong>الخواتم</strong><span>تفاصيل تكمّل إطلالتك ←</span></a><a class="category" href="#products"><strong>السلاسل والكولييهات</strong><span>لمسة رقيقة كل يوم ←</span></a><a class="category" href="#products"><strong>الحلقان والشوكر</strong><span>أناقة في كل تفصيلة ←</span></a></div></section>
-<section class="section" id="products"><div class="section-head"><div><div class="eyebrow">OUR COLLECTION</div><h2>منتجات Silver Mania</h2></div><p>اختاري قطعتك المفضلة</p></div><div class="products" id="product-list"></div></section>
+<div class="categories"><a class="category active" href="#products" data-category="الكل"><strong>كل المنتجات</strong><span>اكتشفي المجموعة كاملة ←</span></a><a class="category" href="#products" data-category="الخواتم"><strong>الخواتم</strong><span>تفاصيل تكمّل إطلالتك ←</span></a><a class="category" href="#products" data-category="السلاسل والكولييهات"><strong>السلاسل والكولييهات</strong><span>لمسة رقيقة كل يوم ←</span></a><a class="category" href="#products" data-category="الحلقان"><strong>الحلقان</strong><span>أناقة في كل تفصيلة ←</span></a><a class="category" href="#products" data-category="الأساور"><strong>الأساور</strong><span>لمسة تكمل أناقتك ←</span></a></div></section>
+<section class="section" id="products"><div class="section-head"><div><div class="eyebrow">OUR COLLECTION</div><h2 id="products-heading">كل منتجات Silver Mania</h2></div><p>اختاري قطعتك المفضلة</p></div><div class="products" id="product-list"></div></section>
 <section class="note" id="about"><h2>الجمال في التفاصيل</h2><p>Silver Mania Store — مساحة لكل محبّات أناقة الفضة.</p></section>
 </main>
 <div class="modal-backdrop" id="cart-modal" aria-hidden="true"><section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title">
@@ -86,14 +86,16 @@ const SUPABASE_URL='https://mqeqlisjswpwgpjesiii.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_IROIfMPB9jHmkxcYIx2TVg_Yg0W5XnS';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 let catalog=[];
+let activeCategory='الكل';
 document.getElementById('year').textContent=new Date().getFullYear();
 const productList=document.getElementById('product-list');
 const money=n=>n.toLocaleString('en-US')+' جنيه';
-function renderProducts(){productList.innerHTML=catalog.map((p,i)=>'<article class="product"><div class="product-art"><img src="'+(p.image_url||p.image||'')+'" alt="'+p.name+'" loading="lazy"></div><h3>'+p.name+'</h3><div class="price">'+money(Number(p.price))+'</div><button class="add-cart" type="button" data-product="'+i+'">أضيفي إلى السلة</button></article>').join('');}
+function renderProducts(){const visible=catalog.filter(p=>activeCategory==='الكل'||p.category===activeCategory);document.getElementById('products-heading').textContent=activeCategory==='الكل'?'كل منتجات Silver Mania':'قسم '+activeCategory;productList.innerHTML=visible.map(p=>({p,i:catalog.indexOf(p)})).map(({p,i})=>'<article class="product"><div class="product-art"><img src="'+(p.image_url||p.image||'')+'" alt="'+p.name+'" loading="lazy"></div><h3>'+p.name+'</h3><div class="price">'+money(Number(p.price))+'</div><button class="add-cart" type="button" data-product="'+i+'">أضيفي إلى السلة</button></article>').join('');}
 renderProducts();
+document.querySelector('.categories').addEventListener('click',e=>{const link=e.target.closest('[data-category]');if(!link)return;e.preventDefault();activeCategory=link.dataset.category;document.querySelectorAll('.categories [data-category]').forEach(x=>x.classList.toggle('active',x===link));renderProducts();document.getElementById('products').scrollIntoView({behavior:'smooth'});});
 async function loadProductsFromDatabase(){
   try{
-    const {data,error}=await supabaseClient.from('products').select('id,name,price,image_url,description').order('created_at',{ascending:false});
+    const {data,error}=await supabaseClient.from('products').select('id,name,price,image_url,description,category').order('created_at',{ascending:false});
     if(error) throw error;
     catalog=data||[];
     renderProducts();
