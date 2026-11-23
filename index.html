@@ -85,19 +85,7 @@ footer{background:#292a28;color:#fff;padding:28px 24px;text-align:center;font-si
 const SUPABASE_URL='https://mqeqlisjswpwgpjesiii.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_IROIfMPB9jHmkxcYIx2TVg_Yg0W5XnS';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const fallbackCatalog=[
-{name:'كولييه بزخارف',price:4250,image:'images/product-1.jpg'},
-{name:'سلسلة وردات بطلاء ذهبي',price:4000,image:'images/product-2.jpg'},
-{name:'حلق فرعوني عودت عيني',price:4800,image:'images/product-3.jpg'},
-{name:'خاتم ألا بذكر الله',price:1900,image:'images/product-4.jpg'},
-{name:'كولييه حورس',price:7500,image:'images/product-05.jpg'},
-{name:'كولييه نفس مطمئنة',price:8500,image:'images/product-06.jpg'},
-{name:'شوكر لوتس',price:14500,image:'images/product-07.jpg'},
-{name:'كولييه هلال ومقولات',price:6000,image:'images/product-08.jpg'},
-{name:'حلق لك في القلب مستقر',price:1550,image:'images/product-09.jpg'},
-{name:'حلق أنت عمري',price:1200,image:'images/product-10.jpg'}
-];
-let catalog=[...fallbackCatalog];
+let catalog=[];
 document.getElementById('year').textContent=new Date().getFullYear();
 const productList=document.getElementById('product-list');
 const money=n=>n.toLocaleString('en-US')+' جنيه';
@@ -107,14 +95,13 @@ async function loadProductsFromDatabase(){
   try{
     const {data,error}=await supabaseClient.from('products').select('id,name,price,image_url,description').order('created_at',{ascending:false});
     if(error) throw error;
-    if(data && data.length){
-      const byName=new Map(data.map(p=>[p.name,p]));
-      const original=fallbackCatalog.map(p=>byName.get(p.name)||p);
-      const added=data.filter(p=>!fallbackCatalog.some(old=>old.name===p.name));
-      catalog=[...original,...added];
-      renderProducts();
-    }
-  }catch(error){console.warn('تعذر تحميل المنتجات من قاعدة البيانات؛ سيتم عرض القائمة الحالية.',error.message);}
+    catalog=data||[];
+    renderProducts();
+  }catch(error){
+    catalog=[];
+    renderProducts();
+    console.warn('تعذر تحميل المنتجات من قاعدة البيانات.',error.message);
+  }
 }
 const cart=[],modal=document.getElementById('cart-modal'),itemsBox=document.getElementById('cart-items'),summaryBox=document.getElementById('cart-summary'),count=document.getElementById('cart-count');
 function renderCart(){const qty=cart.reduce((s,x)=>s+x.qty,0),total=cart.reduce((s,x)=>s+x.qty*x.price,0);count.textContent=qty;if(!cart.length){itemsBox.innerHTML='<p class="empty-cart">السلة لسه فاضية. اختاري قطعة تعجبك من المنتجات.</p>';summaryBox.innerHTML='';document.getElementById('checkout-form').style.display='none';return;}document.getElementById('checkout-form').style.display='grid';itemsBox.innerHTML=cart.map((x,i)=>'<div class="cart-row"><div><strong>'+x.name+'</strong><small>'+money(x.price)+' للقطعة</small><button class="remove-item" type="button" data-remove="'+i+'">حذف</button></div><div class="qty-controls"><button type="button" data-change="'+i+'" data-delta="-1">−</button><span>'+x.qty+'</span><button type="button" data-change="'+i+'" data-delta="1">+</button></div></div>').join('');summaryBox.innerHTML='<div class="cart-total"><span>الإجمالي</span><span>'+money(total)+'</span></div>';}
