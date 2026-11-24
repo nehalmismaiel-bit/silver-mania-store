@@ -22,9 +22,7 @@ header{position:sticky;top:0;z-index:5;background:#fff1f2ed;backdrop-filter:blur
 h1{font-size:clamp(38px,5vw,64px);line-height:1.35;margin:16px 0;font-weight:600}
 .hero-copy p{color:var(--muted);line-height:2.1;font-size:14px;max-width:440px;margin:0 0 25px}
 .primary{display:inline-block;background:var(--ink);color:#fff;padding:12px 26px;border-radius:2px;font-size:12px}
-.hero-art{min-height:380px;position:relative;overflow:hidden;background:linear-gradient(145deg,#e7e4de,#c8c7c2 52%,#eeece7);display:grid;place-items:center}
-.hero-art:before,.hero-art:after{content:"";position:absolute;border:1px solid #ffffffa6;border-radius:50%;width:310px;height:310px}.hero-art:after{width:235px;height:235px}
-.hero-mark{font-size:70px;color:#9e978c;z-index:1}.art-label{position:absolute;bottom:20px;left:24px;color:#fff;font-size:10px;letter-spacing:3px;direction:ltr}
+.hero-art{min-height:380px;position:relative;overflow:hidden;background:#f4dfe3 url('images/Silver%20Mania%20Jewellery%20Showcase.png') center/cover no-repeat;display:grid;place-items:center}
 .section{max-width:1180px;margin:0 auto;padding:0 24px 70px}
 .section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:23px;gap:15px}
 .section-head h2{font-size:27px;font-weight:600;margin:7px 0 0}.section-head p{color:var(--muted);font-size:12px;margin:0}
@@ -62,13 +60,13 @@ footer{background:#17151a;color:#fff;padding:28px 24px;text-align:center;font-si
 <body>
 <div class="announcement">تفاصيل صغيرة… أناقة تدوم ✦</div>
 <header><nav class="nav" aria-label="القائمة الرئيسية">
-<a class="brand" href="#">SILVER <span>MANIA</span></a>
+<a class="brand" href="#">SILVER <span>TALKS</span></a>
 <div class="links"><a href="#home">الرئيسية</a><a href="#collections">المجموعات</a><a href="#products">المنتجات</a><a href="#about">عن المتجر</a></div>
 <button class="cart" type="button" id="open-cart">السلة <span class="cart-count" id="cart-count">0</span></button>
 </nav></header>
 <main id="home">
 <section class="hero"><div class="hero-copy"><div class="eyebrow">SILVER, WITH LOVE</div><h1>أناقة من فضة،<br>تليق بيكي.</h1><p>قطع فضية تضيف لمسة هادئة ومميزة لكل يوم. اكتشفي مجموعتنا واختاري التفاصيل اللي تشبهك.</p><a class="primary" href="#products">تسوّقي المنتجات</a></div>
-<div class="hero-art" role="img" aria-label="تصميم فني تجريدي"><div class="hero-mark">✧</div><div class="art-label">TIMELESS DETAILS</div></div></section>
+<div class="hero-art" role="img" aria-label="تشكيلة مجوهرات Silver Talks"></div></section>
 <section class="section" id="collections"><div class="section-head"><div><div class="eyebrow">FIND YOUR STYLE</div><h2>تسوّقي حسب المجموعة</h2></div><p>اختاري اللمسة الأقرب لذوقك</p></div>
 <div class="categories"><a class="category active" href="#products" data-category="الكل"><strong>كل المنتجات</strong><span>اكتشفي المجموعة كاملة ←</span></a><a class="category" href="#products" data-category="الخواتم"><strong>الخواتم</strong><span>تفاصيل تكمّل إطلالتك ←</span></a><a class="category" href="#products" data-category="السلاسل والكولييهات"><strong>السلاسل والكولييهات</strong><span>لمسة رقيقة كل يوم ←</span></a><a class="category" href="#products" data-category="الحلقان"><strong>الحلقان</strong><span>أناقة في كل تفصيلة ←</span></a><a class="category" href="#products" data-category="الأساور"><strong>الأساور</strong><span>لمسة تكمل أناقتك ←</span></a><a class="category" href="#products" data-category="أنسيالات"><strong>أنسيالات</strong><span>تفاصيل ناعمة تكمّل إطلالتك ←</span></a></div></section>
 <section class="section" id="products"><div class="section-head"><div><div class="eyebrow">OUR COLLECTION</div><h2 id="products-heading">كل منتجات Silver Mania</h2></div><p>اختاري قطعتك المفضلة</p></div><div class="products" id="product-list"></div></section>
