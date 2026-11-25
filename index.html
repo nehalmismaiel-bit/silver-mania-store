@@ -22,7 +22,7 @@ header{position:sticky;top:0;z-index:5;background:#fff1f2ed;backdrop-filter:blur
 h1{font-size:clamp(38px,5vw,64px);line-height:1.35;margin:16px 0;font-weight:600}
 .hero-copy p{color:var(--muted);line-height:2.1;font-size:14px;max-width:440px;margin:0 0 25px}
 .primary{display:inline-block;background:var(--ink);color:#fff;padding:12px 26px;border-radius:2px;font-size:12px}
-.hero-art{min-height:380px;position:relative;overflow:hidden;background:#f4dfe3 url('images/Silver%20Mania%20Jewellery%20Showcase.png') center/cover no-repeat;display:grid;place-items:center}
+.hero-art{min-height:380px;position:relative;overflow:hidden;background:#f4dfe3 url('images/Silver%20Mania%20Jewellery%20Showcase.png') center/cover no-repeat;display:grid;place-items:center}.hero-art .hero-slideshow{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease;z-index:1}.hero-art .hero-slideshow.visible{opacity:1}
 .section{max-width:1180px;margin:0 auto;padding:0 24px 70px}
 .section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:23px;gap:15px}
 .section-head h2{font-size:27px;font-weight:600;margin:7px 0 0}.section-head p{color:var(--muted);font-size:12px;margin:0}
@@ -68,7 +68,7 @@ footer{background:#17151a;color:#fff;padding:28px 24px;text-align:center;font-si
 </nav></header>
 <main id="home">
 <section class="hero"><div class="hero-copy"><div class="eyebrow">SILVER, WITH LOVE</div><h1>أناقة من فضة،<br>تليق بيكي.</h1><p>قطع فضية تضيف لمسة هادئة ومميزة لكل يوم. اكتشفي مجموعتنا واختاري التفاصيل اللي تشبهك.</p><a class="primary" href="#products">تسوّقي المنتجات</a></div>
-<div class="hero-art" role="img" aria-label="تشكيلة مجوهرات Silver Talks"></div></section>
+<div class="hero-art" role="img" aria-label="تشكيلة متغيرة من منتجات SILVER MANIA"><img class="hero-slideshow" id="hero-slideshow" src="" alt="منتج من مجموعة SILVER MANIA"></div></section>
 <section class="section" id="collections"><div class="section-head"><div><div class="eyebrow">FIND YOUR STYLE</div><h2>تسوّقي حسب المجموعة</h2></div><p>اختاري اللمسة الأقرب لذوقك</p></div>
 <div class="categories"><a class="category active" href="#products" data-category="الكل"><strong>كل المنتجات</strong><span>اكتشفي المجموعة كاملة ←</span></a><a class="category" href="#products" data-category="الخواتم"><strong>الخواتم</strong><span>تفاصيل تكمّل إطلالتك ←</span></a><a class="category" href="#products" data-category="السلاسل والكولييهات"><strong>السلاسل والكولييهات</strong><span>لمسة رقيقة كل يوم ←</span></a><a class="category" href="#products" data-category="الحلقان"><strong>الحلقان</strong><span>أناقة في كل تفصيلة ←</span></a><a class="category" href="#products" data-category="الأساور"><strong>الأساور</strong><span>لمسة تكمل أناقتك ←</span></a><a class="category" href="#products" data-category="أنسيالات"><strong>أنسيالات</strong><span>تفاصيل ناعمة تكمّل إطلالتك ←</span></a></div></section>
 <section class="section" id="products"><div class="section-head"><div><div class="eyebrow">OUR COLLECTION</div><h2 id="products-heading">كل منتجات Silver Mania</h2></div><p>اختاري قطعتك المفضلة</p></div><div class="products" id="product-list"></div></section>
@@ -94,12 +94,14 @@ const money=n=>n.toLocaleString('en-US')+' جنيه';
 function renderProducts(){const visible=catalog.filter(p=>activeCategory==='الكل'||p.category===activeCategory);document.getElementById('products-heading').textContent=activeCategory==='الكل'?'كل منتجات Silver Mania':'قسم '+activeCategory;productList.innerHTML=visible.map(p=>({p,i:catalog.indexOf(p)})).map(({p,i})=>'<article class="product"><div class="product-art"><img src="'+(p.image_url||p.image||'')+'" alt="'+p.name+'" loading="lazy" data-view-image></div><h3>'+p.name+'</h3><div class="price">'+money(Number(p.price))+'</div><button class="add-cart" type="button" data-product="'+i+'">أضيفي إلى السلة</button></article>').join('');}
 renderProducts();
 document.querySelector('.categories').addEventListener('click',e=>{const link=e.target.closest('[data-category]');if(!link)return;e.preventDefault();activeCategory=link.dataset.category;document.querySelectorAll('.categories [data-category]').forEach(x=>x.classList.toggle('active',x===link));renderProducts();document.getElementById('products').scrollIntoView({behavior:'smooth'});});
+let heroSlideTimer=null;function startHeroSlideshow(){const heroImage=document.getElementById('hero-slideshow');if(!heroImage)return;const images=catalog.map(p=>p.image_url||p.image).filter(Boolean);if(!images.length)return;for(let i=images.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[images[i],images[j]]=[images[j],images[i]];}let index=0;const showNext=()=>{heroImage.classList.remove('visible');const next=images[index%images.length];const preload=new Image();preload.onload=()=>{heroImage.src=next;requestAnimationFrame(()=>heroImage.classList.add('visible'));};preload.onerror=()=>{};preload.src=next;index++;};showNext();if(heroSlideTimer)clearInterval(heroSlideTimer);if(images.length>1)heroSlideTimer=setInterval(showNext,3500);}
 async function loadProductsFromDatabase(){
   try{
     const {data,error}=await supabaseClient.from('products').select('id,name,price,image_url,description,category').order('created_at',{ascending:false});
     if(error) throw error;
     catalog=data||[];
     renderProducts();
+    startHeroSlideshow();
   }catch(error){
     catalog=[];
     renderProducts();
